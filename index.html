@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Catálogo Personal de Videojuegos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; /* Asegura que no haya márgenes para el footer */
+            padding: 0;
+            background-color: #f4f4f9;
+            min-height: 100vh; /* Para que el footer se pegue abajo si el contenido es corto */
+            display: flex;
+            flex-direction: column;
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex-grow: 1; /* Permite que el contenido crezca y empuje el footer */
+        }
+        /* Estilos del formulario para agregar/editar */
+        #game-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #e9e9e9;
+        }
+        #game-form input[type="text"], #game-form select {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+        #game-form button {
+            flex-grow: 0;
+            white-space: nowrap;
+        }
+
+        /* Contenedor de Búsqueda y Filtro */
+        #filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #search-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #platform-filter {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex-grow: 0.5;
+            min-width: 200px;
+        }
+
+        /* Estilos de botones */
+        button {
+            padding: 10px 15px;
+            color: white;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+        }
+        #cancel-btn {
+            background-color: #6c757d;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: #333;
+            margin-right: 5px;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .link-btn {
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        /* Estilo para la columna ID y Cover */
+        th:first-child, td:first-child {
+            width: 30px;
+            text-align: center;
+        }
+        th.cover-header {
+            width: 165px;
+        }
+        .cover-img {
+            width: 165px;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* NUEVOS ESTILOS PARA EL FOOTER */
+        footer {
+            margin-top: 20px;
+            padding: 10px 0;
+            text-align: center;
+            color: #888; /* Color gris */
+            font-size: 0.8em; /* Tamaño pequeño */
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>👾 Mi Colección de Videojuegos Personal</h1>
+
+    <hr>
+
+    <h2>➕ Agregar Nuevo Videojuego / Editar</h2>
+
+    <form id="game-form">
+        <input type="text" id="title" placeholder="Título del Juego" required>
+        <select id="platform">
+            <option value="PSX">PSX</option>
+            <option value="PS2">PS2</option>
+            <option value="PS3">PS3</option>
+            <option value="PS4">PS4</option>
+            <option value="PS5">PS5</option>
+            <option value="XBOX 360">XBOX 360</option>
+            <option value="SWITCH">SWITCH</option>
+            <option value="WII">WII</option>
+            <option value="RETRO">RETRO</option>
+        </select>
+
+        <input type="text" id="collection" placeholder="Nombre de la Colección">
+        <select id="format">
+            <option value="Físico">Físico</option>
+            <option value="Digital">Digital</option>
+        </select>
+
+        <input type="text" id="cover" placeholder="URL de la Carátula (Cover)">
+        <input type="text" id="enlace" placeholder="Enlace de Descarga/Ubicación">
+
+        <button type="submit">Añadir al Catálogo</button>
+    </form>
+
+    <hr>
+
+    <h2>📜 Catálogo</h2>
+
+    <div id="filter-controls">
+        <select id="platform-filter">
+            <option value="">-- Todas las Plataformas --</option>
+            <option value="PSX">PSX</option>
+            <option value="PS2">PS2</option>
+            <option value="PS3">PS3</option>
+            <option value="PS4">PS4</option>
+            <option value="PS5">PS5</option>
+            <option value="XBOX 360">XBOX 360</option>
+            <option value="SWITCH">SWITCH</option>
+            <option value="WII">WII</option>
+            <option value="RETRO">RETRO</option>
+        </select>
+        <input type="text" id="search-input" placeholder="🔍 Buscar por Título o Colección...">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th class="cover-header">Cover</th>
+                <th>Título</th>
+                <th>Plataforma</th>
+                <th>Colección</th>
+                <th>Formato</th>
+                <th>Enlace</th>
+                <th style="width: 120px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="game-list">
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    Creado por Leonardo Forno
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('game-form');
+        const gameList = document.getElementById('game-list');
+
+        const titleInput = document.getElementById('title');
+        const platformInput = document.getElementById('platform');
+        const addButton = form.querySelector('button[type="submit"]');
+
+        const searchInput = document.getElementById('search-input');
+        const platformFilter = document.getElementById('platform-filter');
+
+        const collectionInput = document.getElementById('collection');
+        const formatInput = document.getElementById('format');
+        const coverInput = document.getElementById('cover');
+        const enlaceInput = document.getElementById('enlace');
+
+        let editingIndex = -1;
+
+        let games = JSON.parse(localStorage.getItem('videoGames')) || [];
+
+        function saveAndRender() {
+            localStorage.setItem('videoGames', JSON.stringify(games));
+            renderGames();
+        }
+
+        function renderGames() {
+            gameList.innerHTML = '';
+
+            const term = searchInput.value.toLowerCase().trim();
+            const selectedPlatform = platformFilter.value;
+
+            const filteredGames = games.filter(game => {
+                const platformMatch = (selectedPlatform === '' || game.platform === selectedPlatform);
+                if (!platformMatch) {
+                    return false;
+                }
+
+                if (!term) return true;
+
+                const titleMatch = game.title.toLowerCase().includes(term);
+                const collectionMatch = game.collection.toLowerCase().includes(term);
+
+                return titleMatch || collectionMatch;
+            });
+
+            if (filteredGames.length === 0 && (term || selectedPlatform)) {
+                const row = gameList.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 8;
+                cell.textContent = `No se encontraron resultados con los criterios de búsqueda/filtro actuales.`;
+                cell.style.textAlign = 'center';
+                return;
+            }
+
+            filteredGames.forEach((game) => {
+                const originalIndex = games.findIndex(g => g === game);
+                const row = gameList.insertRow();
+
+                row.insertCell().textContent = originalIndex + 1;
+
+                const coverCell = row.insertCell();
+                if (game.cover) {
+                    const img = document.createElement('img');
+                    img.src = game.cover;
+                    img.alt = `Cover de ${game.title}`;
+                    img.className = 'cover-img';
+                    coverCell.appendChild(img);
+                } else {
+                    coverCell.textContent = 'N/A';
+                }
+
+                row.insertCell().textContent = game.title;
+                row.insertCell().textContent = game.platform;
+                row.insertCell().textContent = game.collection;
+                row.insertCell().textContent = game.format;
+
+                const enlaceCell = row.insertCell();
+                if (game.enlace) {
+                    const link = document.createElement('a');
+                    link.href = game.enlace;
+                    link.target = '_blank';
+                    link.textContent = 'Abrir Enlace';
+                    link.className = 'link-btn';
+                    enlaceCell.appendChild(link);
+                } else {
+                    enlaceCell.textContent = 'N/A';
+                }
+
+                const actionsCell = row.insertCell();
+
+                const editBtn = document.createElement('button');
+                editBtn.textContent = 'Editar';
+                editBtn.className = 'edit-btn';
+                editBtn.onclick = () => loadGameForEdit(originalIndex);
+                actionsCell.appendChild(editBtn);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Eliminar';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.onclick = () => deleteGame(originalIndex);
+                actionsCell.appendChild(deleteBtn);
+            });
+        }
+
+        window.deleteGame = function(index) {
+            const gameTitle = games[index].title;
+            if (confirm(`¿Estás seguro de que quieres eliminar el juego "${gameTitle}" del catálogo?`)) {
+
+                games.splice(index, 1);
+
+                saveAndRender();
+
+                if (editingIndex === index) {
+                    cancelEdit();
+                }
+
+                alert(`El juego "${gameTitle}" ha sido eliminado.`);
+            }
+        }
+
+
+        searchInput.addEventListener('keyup', renderGames);
+        platformFilter.addEventListener('change', renderGames);
+
+        window.loadGameForEdit = function(index) {
+            const game = games[index];
+
+            titleInput.value = game.title;
+            platformInput.value = game.platform;
+            collectionInput.value = game.collection || '';
+            formatInput.value = game.format || 'Físico';
+            coverInput.value = game.cover || '';
+            enlaceInput.value = game.enlace || '';
+
+            editingIndex = index;
+
+            addButton.textContent = 'Guardar Edición';
+
+            if (!document.getElementById('cancel-btn')) {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.id = 'cancel-btn';
+                cancelBtn.textContent = 'Cancelar';
+                cancelBtn.type = 'button';
+                cancelBtn.onclick = cancelEdit;
+                form.appendChild(cancelBtn);
+            }
+        }
+
+        window.cancelEdit = function() {
+            editingIndex = -1;
+            titleInput.value = '';
+            platformInput.value = 'PSX';
+            collectionInput.value = '';
+            formatInput.value = 'Físico';
+            coverInput.value = '';
+            enlaceInput.value = '';
+
+            addButton.textContent = 'Añadir al Catálogo';
+
+            const cancelBtn = document.getElementById('cancel-btn');
+            if (cancelBtn) {
+                cancelBtn.remove();
+            }
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const gameData = {
+                title: titleInput.value.trim(),
+                platform: platformInput.value,
+                collection: collectionInput.value.trim(),
+                format: formatInput.value,
+                cover: coverInput.value.trim(),
+                enlace: enlaceInput.value.trim()
+            };
+
+            if (!gameData.title) return;
+
+            if (editingIndex !== -1) {
+                games[editingIndex] = gameData;
+                cancelEdit();
+            } else {
+                games.push(gameData);
+
+                titleInput.value = '';
+                platformInput.value = 'PSX';
+                collectionInput.value = '';
+                formatInput.value = 'Físico';
+                coverInput.value = '';
+                enlaceInput.value = '';
+            }
+
+            saveAndRender();
+        });
+
+        renderGames();
+    });
+</script>
+
+</body>
+</html>
